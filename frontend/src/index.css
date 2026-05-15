@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #f4f1ea;
+    color: #3d2e20;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
+.input-field {
+  @apply w-full bg-input-bg border border-input-border text-text-main rounded-lg p-3 mt-1 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all placeholder-text-muted;
+}
+
+.btn-primary {
+  @apply px-5 py-3 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-xl transition-colors shadow-lg shadow-primary-500/20;
+}
+
+.btn-secondary {
+  @apply px-5 py-3 bg-surfaceHover hover:bg-input-border text-text-main font-medium rounded-xl transition-colors;
+}
+
+.card {
+  @apply bg-surface rounded-2xl shadow-xl border border-input-border overflow-hidden;
+}
+
+/* Scrollbar customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f4f1ea; 
+}
+::-webkit-scrollbar-thumb {
+  background: #d6cdbd; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a67c52; 
+}
+
+@media print {
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  * {
+    color: black !important;
+    border-color: #000 !important;
+  }
+  .bg-primary-500\/10, .bg-surfaceHover, .bg-surfaceHover\/50 {
+    background-color: #f3f4f6 !important;
+    -webkit-print-color-adjust: exact;
+  }
+  input, textarea {
+    color: black !important;
+  }
+}
