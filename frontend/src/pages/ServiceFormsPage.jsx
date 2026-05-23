@@ -118,39 +118,41 @@ export default function ServiceFormsPage() {
             min-height: 297mm;
             margin: 0 auto 30px auto;
             background: #fff;
-            padding: 25px;
-            border: 1px solid #000;
+            padding: 40px; /* Increased padding */
+            border: 1px solid #ccc; /* Softer border */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             color: #000;
             font-family: Arial, Helvetica, sans-serif;
             position: relative;
         }
-        .header-sec { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
-        .logo-title { display: flex; gap: 12px; align-items: flex-start; }
-        .logo-img { width: 60px; height: 60px; border: 2px solid #000; border-radius: 50%; object-fit: contain; }
-        .company-name { font-size: 30px; font-weight: 700; line-height: 1.2; }
-        .company-details { text-align: right; font-size: 13px; line-height: 1.5; }
-        .form-title { text-align: center; font-size: 34px; font-weight: 700; margin: 20px 0 10px; }
-        .format-no { text-align: right; font-size: 14px; font-weight: 700; margin-bottom: 12px; }
-        .a4-table { width: 100%; border-collapse: collapse; }
-        .a4-table td, .a4-table th { border: 1px solid #000; padding: 8px; font-size: 15px; vertical-align: top; }
-        .lbl { width: 180px; font-weight: 700; }
-        .note { margin-top: 25px; font-size: 17px; line-height: 1.7; }
-        .note ul { margin-left: 30px; margin-top: 10px; }
-        .sig-section { margin-top: 60px; display: flex; justify-content: space-between; gap: 40px; }
-        .sig-box { width: 45%; }
-        .sig-line { border-bottom: 1px solid #000; margin-top: 50px; }
+        .header-sec { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 20px; }
+        .logo-title { display: flex; gap: 15px; align-items: center; flex: 1; }
+        .logo-img { width: 75px; height: 75px; object-fit: contain; }
+        .company-name { font-size: 26px; font-weight: bold; line-height: 1.2; color: #000; }
+        .company-details { text-align: right; font-size: 12px; line-height: 1.4; flex-shrink: 0; color: #333; }
+        .form-title { text-align: center; font-size: 28px; font-weight: bold; margin: 30px 0 10px; text-decoration: underline; text-transform: uppercase; }
+        .format-no { text-align: right; font-size: 12px; font-weight: bold; margin-bottom: 15px; }
+        .a4-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        .a4-table td, .a4-table th { border: 1px solid #000; padding: 10px; font-size: 14px; vertical-align: middle; }
+        .lbl { width: 25%; font-weight: bold; background-color: #f9f9f9; }
+        .note { margin-top: 20px; font-size: 15px; line-height: 1.6; text-align: justify; }
+        .note ul { margin-left: 20px; margin-top: 10px; }
+        .sig-section { margin-top: 50px; display: flex; justify-content: space-between; gap: 40px; }
+        .sig-box { width: 45%; font-size: 14px; }
+        .sig-line { border-bottom: 1px solid #000; margin-top: 40px; }
         .ctr { text-align: center; }
-        .sml { font-size: 12px; }
-        .chk { width: 18px; height: 18px; accent-color: #000; }
-        .sec-title { font-weight: 700; background: #f1f1f1; }
-        .a4-input { width: 100%; border: none; outline: none; font-size: 15px; background: transparent; }
-        .a4-textarea { width: 100%; border: none; outline: none; resize: none; font-size: 15px; background: transparent; }
-        .chk-row { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-        .save-btn { position: absolute; top: -15px; right: -15px; padding: 8px 16px; background: #a67c52; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: none; }
+        .sml { font-size: 11px; color: #555; }
+        .chk { width: 16px; height: 16px; accent-color: #000; cursor: pointer; }
+        .sec-title { font-weight: bold; background: #e5e5e5 !important; text-align: center; text-transform: uppercase; }
+        .a4-input { width: 100%; border: none; outline: none; font-size: 14px; background: transparent; font-family: inherit; }
+        .a4-textarea { width: 100%; border: none; outline: none; resize: none; font-size: 14px; background: transparent; font-family: inherit; }
+        .chk-row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin-top: 5px; }
+        .save-btn { display: block; width: 100%; margin-top: 20px; padding: 12px; background: #28a745; color: white; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; text-align: center; border: none; transition: background 0.3s; }
+        .save-btn:hover { background: #218838; }
         
         @media print {
             body { background: #fff; padding: 0; }
-            .a4-page { border: none; margin: 0 auto; page-break-after: always; padding: 0; width: 100%; }
+            .a4-page { border: none; margin: 0 auto; padding: 15mm; width: 210mm; box-shadow: none; page-break-after: always; }
             .no-print { display: none !important; }
         }
       `}</style>
@@ -160,8 +162,8 @@ export default function ServiceFormsPage() {
         {/* ========================================================= */}
         {/* ================= ACCEPTANCE CERTIFICATE ================= */}
         {/* ========================================================= */}
-        <form onSubmit={submitInstallation} className="a4-page shadow-2xl">
-          <button type="submit" className="save-btn no-print hover:bg-[#8b6845]">Save Acceptance</button>
+        <form onSubmit={submitInstallation} className="a4-page">
+
           
           <div className="header-sec">
               <div className="logo-title">
@@ -257,13 +259,15 @@ export default function ServiceFormsPage() {
               Note: Warranty ending date may be changed based on the terms and conditions
               mentioned on Customer's PO and Order confirmation received from M/s. Spectro, Germany.
           </div>
+          
+          <button type="submit" className="save-btn no-print">Save Acceptance Certificate</button>
         </form>
 
         {/* ========================================================= */}
         {/* ====================== SERVICE REPORT ==================== */}
         {/* ========================================================= */}
-        <form onSubmit={submitServiceReport} className="a4-page shadow-2xl">
-          <button type="submit" className="save-btn no-print hover:bg-[#8b6845]">Save Service</button>
+        <form onSubmit={submitServiceReport} className="a4-page">
+
           
           <div className="header-sec">
               <div className="logo-title">
@@ -404,13 +408,15 @@ export default function ServiceFormsPage() {
               </tr>
             </tbody>
           </table>
+          
+          <button type="submit" className="save-btn no-print">Save Service Report</button>
         </form>
 
         {/* ========================================================= */}
         {/* ================= CUSTOMER FEEDBACK FORM ================= */}
         {/* ========================================================= */}
-        <form onSubmit={submitCustomerFeedback} className="a4-page shadow-2xl">
-          <button type="submit" className="save-btn no-print hover:bg-[#8b6845]">Save Feedback</button>
+        <form onSubmit={submitCustomerFeedback} className="a4-page">
+
 
           <div className="header-sec">
               <div className="logo-title">
@@ -501,6 +507,8 @@ export default function ServiceFormsPage() {
                   Date: <input type="date" className="a4-input w-auto inline-block" />
               </div>
           </div>
+          
+          <button type="submit" className="save-btn no-print">Save Customer Feedback</button>
         </form>
 
       </div>
