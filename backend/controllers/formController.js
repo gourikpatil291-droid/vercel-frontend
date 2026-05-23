@@ -95,3 +95,35 @@ exports.getClosureForms = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+// Customer Feedbacks
+exports.submitCustomerFeedback = async (req, res) => {
+    try {
+        const data = { ...req.body, user_id: req.user.id };
+        for (let key in data) {
+            if (data[key] === '') data[key] = null;
+        }
+        const query = 'INSERT INTO customer_reviews SET ?';
+        await pool.query(query, data);
+        res.status(201).json({ message: 'Customer feedback submitted' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+exports.getCustomerFeedbacks = async (req, res) => {
+    try {
+        let query = 'SELECT * FROM customer_reviews';
+        let params = [];
+        if (req.user.role === 'SE') {
+            query += ' WHERE user_id = ?';
+            params.push(req.user.id);
+        }
+        const [rows] = await pool.query(query, params);
+        res.status(200).json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};

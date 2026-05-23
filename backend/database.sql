@@ -1,4 +1,10 @@
-
+DROP TABLE IF EXISTS customer_reviews;
+DROP TABLE IF EXISTS service_reports;
+DROP TABLE IF EXISTS installations;
+DROP TABLE IF EXISTS complaints;
+DROP TABLE IF EXISTS closure_forms;
+DROP TABLE IF EXISTS otp_codes;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
