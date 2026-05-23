@@ -16,7 +16,7 @@ async function getTransporter() {
         port: 465,
         secure: true,
         auth: {
-            user: process.env.EMAIL_USER || 'aartigaurik251@gmail.com',
+            user: process.env.EMAIL_USER || 'gourikpatil291@gmail.com',
             pass: process.env.EMAIL_PASS || 'mwisbutvkmmodsfx'
         }
     });
@@ -85,7 +85,7 @@ exports.login = async (req, res) => {
         if (isEmail) {
             // Send OTP via Email
             const mailOptions = {
-                from: process.env.EMAIL_USER || 'aartigaurik251@gmail.com',
+                from: process.env.EMAIL_USER || 'gourikpatil291@gmail.com',
                 to: loginId,
                 subject: `Your Login OTP for Nucleus Analytics`,
                 text: `Your OTP for login is: ${otp}. It will expire in 10 minutes.`
