@@ -1,8 +1,95 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Printer, Download } from 'lucide-react';
 import html2pdf from 'html2pdf.js';
+
+function SignaturePad() {
+  const canvasRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [imageURL, setImageURL] = useState(null);
+
+  const startDrawing = (e) => {
+    setIsDrawing(true);
+    draw(e);
+  };
+  const stopDrawing = () => {
+    setIsDrawing(false);
+    canvasRef.current.getContext('2d').beginPath();
+    setImageURL(canvasRef.current.toDataURL());
+  };
+  const draw = (e) => {
+    if (!isDrawing) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#000';
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+  };
+  
+  const handleUpload = (e) => {
+    const file = e.target.files[0];
+    if(file){
+      const reader = new FileReader();
+      reader.onload = (event) => {
+         setImageURL(event.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
+  const clear = () => {
+    setImageURL(null);
+    if (canvasRef.current) {
+      const ctx = canvasRef.current.getContext('2d');
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    }
+  };
+
+  return (
+    <div className="w-full relative min-h-[60px] flex flex-col items-center justify-center mt-2 border-b border-gray-300 pb-2">
+       {imageURL ? (
+         <div className="relative w-full h-[60px]">
+           <img src={imageURL} className="max-h-[60px] mx-auto object-contain" alt="Signature" />
+           <button type="button" onClick={clear} className="absolute top-0 right-0 text-[10px] bg-red-500 text-white px-2 py-1 rounded no-print">Clear</button>
+         </div>
+       ) : (
+         <div className="w-full no-print bg-gray-50 border border-dashed border-gray-300 rounded p-1">
+           <canvas
+             ref={canvasRef}
+             width={250}
+             height={60}
+             className="cursor-crosshair w-full bg-white touch-none"
+             onMouseDown={startDrawing}
+             onMouseUp={stopDrawing}
+             onMouseOut={stopDrawing}
+             onMouseMove={draw}
+             onTouchStart={startDrawing}
+             onTouchEnd={stopDrawing}
+             onTouchMove={draw}
+           />
+           <div className="flex justify-between items-center mt-1 px-1 text-[10px]">
+             <span className="text-gray-500">Draw signature</span>
+             <label className="text-blue-600 cursor-pointer font-semibold">
+               Upload
+               <input type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+             </label>
+           </div>
+         </div>
+       )}
+    </div>
+  );
+}
 
 export default function ServiceFormsPage() {
   const [installationForm, setInstallationForm] = useState({});
@@ -76,7 +163,7 @@ export default function ServiceFormsPage() {
   const handleDownloadPDF = async () => {
     const element = document.getElementById('pdf-wrapper');
     const opt = {
-      margin: 10,
+      margin: 0,
       filename: `service_forms_${new Date().getTime()}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true },
@@ -192,7 +279,7 @@ export default function ServiceFormsPage() {
         
         @media print {
             body { background: #fff; padding: 0; }
-            .a4-page { border: 2px solid #000; margin: 0; padding: 10mm; width: 190mm; min-height: 277mm; box-sizing: border-box; box-shadow: none; page-break-after: always; }
+            .a4-page { border: none; margin: 0; padding: 15mm; width: 210mm; min-height: 297mm; box-shadow: none; page-break-after: always; }
             .no-print { display: none !important; }
         }
       `}</style>
@@ -284,13 +371,13 @@ export default function ServiceFormsPage() {
 
           <div className="sig-section">
               <div className="sig-box">
-                  Customer Representative:<br/><br/>Name & Signature
-                  <div className="sig-line"></div><br/>
+                  Customer Representative:<br/><br/>Name: <input type="text" className="a4-input w-full border-b border-gray-300" />
+                  <SignaturePad /><br/>
                   Date: <input type="date" className="a4-input w-auto inline-block" />
               </div>
               <div className="sig-box">
-                  Nucleus Representative:<br/><br/>Name & Signature
-                  <div className="sig-line"></div><br/>
+                  Nucleus Representative:<br/><br/>Name: <input type="text" className="a4-input w-full border-b border-gray-300" />
+                  <SignaturePad /><br/>
                   Date: <input type="date" className="a4-input w-auto inline-block" />
               </div>
           </div>
@@ -444,8 +531,8 @@ export default function ServiceFormsPage() {
                   <td width="50%"><b>Customer Name</b><input type="text" className="a4-input" /></td>
               </tr>
               <tr>
-                  <td><b>Signature/Date</b><div className="sig-line mt-10"></div></td>
-                  <td><b>Signature/Date</b><div className="sig-line mt-10"></div></td>
+                  <td><b>Signature</b><SignaturePad /><br/>Date <input type="date" className="a4-input w-auto inline-block" /></td>
+                  <td><b>Signature</b><SignaturePad /><br/>Date <input type="date" className="a4-input w-auto inline-block" /></td>
               </tr>
             </tbody>
           </table>
@@ -539,13 +626,13 @@ export default function ServiceFormsPage() {
 
           <div className="sig-section">
               <div className="sig-box">
-                  Acknowledgement<br/><br/>Customer Name & Signature
-                  <div className="sig-line"></div><br/>
+                  Acknowledgement<br/><br/>Customer Name: <input type="text" className="a4-input w-full border-b border-gray-300" />
+                  <SignaturePad /><br/>
                   Date: <input type="date" className="a4-input w-auto inline-block" />
               </div>
               <div className="sig-box">
-                  Acknowledgement<br/><br/>Engineer Name & Signature
-                  <div className="sig-line"></div><br/>
+                  Acknowledgement<br/><br/>Engineer Name: <input type="text" className="a4-input w-full border-b border-gray-300" />
+                  <SignaturePad /><br/>
                   Date: <input type="date" className="a4-input w-auto inline-block" />
               </div>
           </div>
