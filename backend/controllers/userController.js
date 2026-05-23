@@ -25,7 +25,7 @@ exports.updateUserStatus = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
     try {
-        const [users] = await pool.query('SELECT id, name, email, mobile, employee_id, role, status FROM users');
+        const [users] = await pool.query('SELECT id, name, email, mobile, employee_id, address, role, status, created_at FROM users');
         res.status(200).json(users);
     } catch (error) {
         console.error(error);
