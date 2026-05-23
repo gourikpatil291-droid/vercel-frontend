@@ -17,7 +17,7 @@ async function getTransporter() {
         secure: true,
         auth: {
             user: process.env.EMAIL_USER || 'gourikpatil291@gmail.com',
-            pass: process.env.EMAIL_PASS || 'mwisbutvkmmodsfx'
+            pass: process.env.EMAIL_PASS || 'wggewgwddwfxbaqb'
         }
     });
 }

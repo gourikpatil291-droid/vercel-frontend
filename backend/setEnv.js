@@ -1,6 +1,6 @@
 const { spawnSync } = require('child_process');
 
-const password = 'mwisbutvkmmodsfx';
+const password = 'wggewgwddwfxbaqb';
 
 const result = spawnSync('npx.cmd', ['vercel', 'env', 'add', 'EMAIL_PASS', 'production'], {
     input: password + '\n', // Ensure newline
