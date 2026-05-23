@@ -73,7 +73,7 @@ export default function ServiceFormsPage() {
     }
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     const element = document.getElementById('pdf-wrapper');
     const opt = {
       margin: 0,
@@ -86,9 +86,37 @@ export default function ServiceFormsPage() {
     const noPrintElements = document.querySelectorAll('.no-print');
     noPrintElements.forEach(el => el.style.display = 'none');
 
-    html2pdf().set(opt).from(element).save().then(() => {
-      noPrintElements.forEach(el => el.style.display = '');
+    // Temporarily replace inputs/textareas with divs so text isn't cut off in the PDF
+    const inputs = element.querySelectorAll('input, textarea');
+    const replacements = [];
+    
+    inputs.forEach(input => {
+      const div = document.createElement('div');
+      div.innerText = input.value || '';
+      div.className = input.className;
+      div.style.minHeight = input.offsetHeight ? input.offsetHeight + 'px' : 'auto';
+      div.style.whiteSpace = 'pre-wrap';
+      div.style.wordWrap = 'break-word';
+      
+      if (input.type === 'radio' || input.type === 'checkbox') {
+        div.innerText = input.checked ? '☑' : '☐';
+        div.style.fontSize = '18px';
+        div.style.minHeight = 'auto';
+      }
+      
+      input.parentNode.insertBefore(div, input);
+      input.style.display = 'none';
+      replacements.push({ input, div });
     });
+
+    await html2pdf().set(opt).from(element).save();
+
+    // Restore original inputs
+    replacements.forEach(({ input, div }) => {
+      input.style.display = '';
+      div.remove();
+    });
+    noPrintElements.forEach(el => el.style.display = '');
   };
 
   return (
