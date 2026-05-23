@@ -98,10 +98,20 @@ export default function ServiceFormsPage() {
       div.style.whiteSpace = 'pre-wrap';
       div.style.wordWrap = 'break-word';
       
+      // Add borders so it looks structured in the PDF
+      if (input.tagName.toLowerCase() === 'textarea' || input.type === 'text' || input.type === 'date' || input.type === 'number') {
+         div.style.border = '1px solid #999';
+         div.style.padding = '4px 8px';
+         div.style.borderRadius = '4px';
+         div.style.backgroundColor = '#fdfdfd';
+      }
+
       if (input.type === 'radio' || input.type === 'checkbox') {
         div.innerText = input.checked ? '☑' : '☐';
         div.style.fontSize = '18px';
         div.style.minHeight = 'auto';
+        div.style.border = 'none';
+        div.style.padding = '0';
       }
       
       input.parentNode.insertBefore(div, input);
@@ -146,12 +156,13 @@ export default function ServiceFormsPage() {
             min-height: 297mm;
             margin: 0 auto 30px auto;
             background: #fff;
-            padding: 40px; /* Increased padding */
-            border: 1px solid #ccc; /* Softer border */
+            padding: 40px; 
+            border: 1px solid #ccc;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             color: #000;
             font-family: Arial, Helvetica, sans-serif;
             position: relative;
+            page-break-after: always;
         }
         .header-sec { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 20px; }
         .logo-title { display: flex; gap: 15px; align-items: center; flex: 1; }
