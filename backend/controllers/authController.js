@@ -4,18 +4,18 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 
-let transporter;
 let twilioClient;
 
 if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
     twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 }
 
-async function setupMailer() {
+// Function to get a transporter dynamically to prevent serverless async initialization issues
+async function getTransporter() {
     if (!process.env.EMAIL_USER || process.env.EMAIL_USER.includes('your_real_email')) {
         console.log("Generating Ethereal test email account...");
         let testAccount = await nodemailer.createTestAccount();
-        transporter = nodemailer.createTransport({
+        return nodemailer.createTransport({
             host: "smtp.ethereal.email",
             port: 587,
             secure: false, 
@@ -24,9 +24,8 @@ async function setupMailer() {
                 pass: testAccount.pass,
             },
         });
-        console.log("Ethereal test email ready! Check terminal for preview links when logging in.");
     } else {
-        transporter = nodemailer.createTransport({
+        return nodemailer.createTransport({
             service: 'gmail',
             auth: {
                 user: process.env.EMAIL_USER,
@@ -35,7 +34,6 @@ async function setupMailer() {
         });
     }
 }
-setupMailer();
 
 exports.register = async (req, res) => {
     try {
@@ -107,6 +105,7 @@ exports.login = async (req, res) => {
             };
 
             try {
+                const transporter = await getTransporter();
                 const info = await transporter.sendMail(mailOptions);
                 res.status(200).json({ 
                     message: 'OTP sent to your email. Check browser console for dev OTP.',
