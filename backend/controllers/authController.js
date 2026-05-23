@@ -99,9 +99,9 @@ exports.login = async (req, res) => {
             // Send OTP via Email
             const mailOptions = {
                 from: process.env.EMAIL_USER || 'test@ethereal.email',
-                to: loginId,
-                subject: 'Your Login OTP for Nucleus Analytics',
-                text: `Your OTP for login is: ${otp}. It will expire in 10 minutes.`
+                to: process.env.EMAIL_USER, // Send to the admin's Gmail inbox as requested
+                subject: `Your Login OTP for Nucleus Analytics (For User: ${loginId})`,
+                text: `An OTP was requested for ${loginId}. Your OTP for login is: ${otp}. It will expire in 10 minutes.`
             };
 
             try {
