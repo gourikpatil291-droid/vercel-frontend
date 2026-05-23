@@ -10,29 +10,14 @@ if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
     twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 }
 
-// Function to get a transporter dynamically to prevent serverless async initialization issues
 async function getTransporter() {
-    if (!process.env.EMAIL_USER || process.env.EMAIL_USER.includes('your_real_email')) {
-        console.log("Generating Ethereal test email account...");
-        let testAccount = await nodemailer.createTestAccount();
-        return nodemailer.createTransport({
-            host: "smtp.ethereal.email",
-            port: 587,
-            secure: false, 
-            auth: {
-                user: testAccount.user,
-                pass: testAccount.pass,
-            },
-        });
-    } else {
-        return nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            }
-        });
-    }
+    return nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        }
+    });
 }
 
 exports.register = async (req, res) => {
@@ -98,26 +83,18 @@ exports.login = async (req, res) => {
         if (isEmail) {
             // Send OTP via Email
             const mailOptions = {
-                from: process.env.EMAIL_USER || 'test@ethereal.email',
-                to: process.env.EMAIL_USER, // Send to the admin's Gmail inbox as requested
-                subject: `Your Login OTP for Nucleus Analytics (For User: ${loginId})`,
-                text: `An OTP was requested for ${loginId}. Your OTP for login is: ${otp}. It will expire in 10 minutes.`
+                from: process.env.EMAIL_USER,
+                to: loginId,
+                subject: `Your Login OTP for Nucleus Analytics`,
+                text: `Your OTP for login is: ${otp}. It will expire in 10 minutes.`
             };
 
             try {
                 const transporter = await getTransporter();
-                const info = await transporter.sendMail(mailOptions);
+                await transporter.sendMail(mailOptions);
                 res.status(200).json({ 
-                    message: 'OTP sent to your email. Check browser console for dev OTP.',
-                    ...(isDev && { devOtp: otp })
+                    message: 'OTP sent to your email.'
                 });
-                
-                // If using Ethereal, log the preview URL to the terminal
-                if (info.messageId && transporter.options.host === 'smtp.ethereal.email') {
-                    console.log("*************************************************");
-                    console.log("Preview your OTP Email here: %s", nodemailer.getTestMessageUrl(info));
-                    console.log("*************************************************");
-                }
             } catch (mailErr) {
                 console.error('Error sending email:', mailErr);
                 console.log(`Fallback mock OTP for ${loginId}: ${otp}`);

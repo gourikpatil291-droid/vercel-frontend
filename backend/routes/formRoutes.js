@@ -5,7 +5,8 @@ const {
     submitInstallation, getInstallations,
     submitServiceReport, getServiceReports,
     submitClosureForm, getClosureForms,
-    submitCustomerFeedback, getCustomerFeedbacks
+    submitCustomerFeedback, getCustomerFeedbacks,
+    getUserForms
 } = require('../controllers/formController');
 
 const router = express.Router();
@@ -27,5 +28,8 @@ router.get('/closure-forms', getClosureForms);
 // Customer Feedbacks
 router.post('/customer-feedbacks', submitCustomerFeedback);
 router.get('/customer-feedbacks', getCustomerFeedbacks);
+
+// User Forms for Manager/HO Preview
+router.get('/user/:userId', authorize('Manager', 'HO'), getUserForms);
 
 module.exports = router;

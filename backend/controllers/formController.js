@@ -127,3 +127,24 @@ exports.getCustomerFeedbacks = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+// Fetch all forms for a specific user (For Manager/HO preview)
+exports.getUserForms = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const [installations] = await pool.query('SELECT * FROM installations WHERE user_id = ?', [userId]);
+        const [serviceReports] = await pool.query('SELECT * FROM service_reports WHERE user_id = ?', [userId]);
+        const [customerFeedbacks] = await pool.query('SELECT * FROM customer_reviews WHERE user_id = ?', [userId]);
+        
+        const combined = [
+            ...installations.map(f => ({ ...f, _type: 'Acceptance Certificate' })),
+            ...serviceReports.map(f => ({ ...f, _type: 'Service Report' })),
+            ...customerFeedbacks.map(f => ({ ...f, _type: 'Customer Feedback' }))
+        ].sort((a, b) => new Date(b.created_at || Date.now()) - new Date(a.created_at || Date.now()));
+        
+        res.status(200).json(combined);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error fetching user forms' });
+    }
+};
