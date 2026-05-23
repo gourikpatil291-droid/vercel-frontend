@@ -155,45 +155,44 @@ export default function ServiceFormsPage() {
             min-height: 297mm;
             margin: 0 auto 30px auto;
             background: #fff;
-            padding: 20px; 
+            padding: 25px; 
             border: 1px solid #ccc;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             color: #000;
             font-family: Arial, Helvetica, sans-serif;
             page-break-after: always;
-            page-break-inside: avoid;
             box-sizing: border-box;
             position: relative;
         }
         .footer-credits { position: absolute; bottom: 15px; right: 20px; font-size: 10px; font-style: italic; color: #555; }
-        .header-sec { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; gap: 10px; }
+        .header-sec { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 15px; }
         .logo-title { display: flex; gap: 10px; align-items: center; flex: 1; }
-        .logo-img { width: 50px; height: 50px; object-fit: contain; }
-        .company-name { font-size: 18px; font-weight: bold; line-height: 1.1; color: #000; }
-        .company-details { text-align: right; font-size: 10px; line-height: 1.2; flex-shrink: 0; color: #333; }
-        .form-title { text-align: center; font-size: 18px; font-weight: bold; margin: 5px 0; text-decoration: underline; text-transform: uppercase; }
-        .format-no { text-align: right; font-size: 9px; font-weight: bold; margin-bottom: 5px; }
+        .logo-img { width: 60px; height: 60px; object-fit: contain; }
+        .company-name { font-size: 22px; font-weight: bold; line-height: 1.2; color: #000; }
+        .company-details { text-align: right; font-size: 11px; line-height: 1.3; flex-shrink: 0; color: #333; }
+        .form-title { text-align: center; font-size: 20px; font-weight: bold; margin: 5px 0; text-decoration: underline; text-transform: uppercase; }
+        .format-no { text-align: right; font-size: 11px; font-weight: bold; margin-bottom: 5px; }
         .a4-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
-        .a4-table td, .a4-table th { border: 1px solid #000; padding: 3px; font-size: 11px; vertical-align: middle; }
-        .lbl { width: 25%; font-weight: bold; background-color: #f9f9f9; font-size: 11px; }
-        .note { margin-top: 10px; font-size: 12px; line-height: 1.3; text-align: justify; }
+        .a4-table td, .a4-table th { border: 1px solid #000; padding: 5px; font-size: 13px; vertical-align: middle; }
+        .lbl { width: 25%; font-weight: bold; background-color: #f9f9f9; font-size: 13px; }
+        .note { margin-top: 15px; font-size: 14px; line-height: 1.4; text-align: justify; }
         .note ul { margin-left: 20px; margin-top: 5px; }
-        .sig-section { margin-top: 15px; display: flex; justify-content: space-between; gap: 20px; }
-        .sig-box { width: 45%; font-size: 11px; }
-        .sig-line { border-bottom: 1px solid #000; margin-top: 15px; }
+        .sig-section { margin-top: 15px; display: flex; justify-content: space-between; gap: 30px; }
+        .sig-box { width: 45%; font-size: 13px; }
+        .sig-line { border-bottom: 1px solid #000; margin-top: 20px; }
         .ctr { text-align: center; }
-        .sml { font-size: 9px; color: #555; }
+        .sml { font-size: 11px; color: #555; }
         .chk { width: 16px; height: 16px; accent-color: #000; cursor: pointer; }
         .sec-title { font-weight: bold; background: #e5e5e5 !important; text-align: center; text-transform: uppercase; }
-        .a4-input { width: 100%; border: none; outline: none; font-size: 11px; background: transparent; font-family: inherit; }
-        .a4-textarea { width: 100%; border: none; outline: none; resize: none; font-size: 11px; background: transparent; font-family: inherit; }
-        .chk-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 2px; }
+        .a4-input { width: 100%; border: none; outline: none; font-size: 14px; background: transparent; font-family: inherit; }
+        .a4-textarea { width: 100%; border: none; outline: none; resize: none; font-size: 14px; background: transparent; font-family: inherit; }
+        .chk-row { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin-top: 5px; }
         .save-btn { display: block; width: 100%; margin-top: 20px; padding: 12px; background: #28a745; color: white; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; text-align: center; border: none; transition: background 0.3s; }
         .save-btn:hover { background: #218838; }
         
         @media print {
             body { background: #fff; padding: 0; }
-            .a4-page { border: none; margin: 0; padding: 10mm; width: 210mm; height: 297mm; max-height: 297mm; overflow: hidden; box-shadow: none; page-break-after: always; page-break-inside: avoid; }
+            .a4-page { border: 2px solid #000; margin: 0; padding: 15mm; width: 210mm; min-height: 297mm; box-shadow: none; page-break-after: always; }
             .no-print { display: none !important; }
         }
       `}</style>
@@ -366,11 +365,11 @@ export default function ServiceFormsPage() {
               <tr>
                   <td colSpan="2">
                       <b>Problem Reported:</b>
-                      <textarea className="a4-textarea h-[30px]" name="problem_reported" value={serviceForm.problem_reported||''} onChange={handleServiceChange}></textarea>
+                      <textarea className="a4-textarea h-[40px]" name="problem_reported" value={serviceForm.problem_reported||''} onChange={handleServiceChange}></textarea>
                   </td>
                   <td colSpan="2">
                       <b>Observations:</b>
-                      <textarea className="a4-textarea h-[30px]" name="observations" value={serviceForm.observations||''} onChange={handleServiceChange}></textarea>
+                      <textarea className="a4-textarea h-[40px]" name="observations" value={serviceForm.observations||''} onChange={handleServiceChange}></textarea>
                   </td>
               </tr>
             </tbody>
@@ -430,7 +429,7 @@ export default function ServiceFormsPage() {
                   <td>Remarks</td>
               </tr>
               <tr>
-                  <td height="30"><textarea className="a4-textarea h-full"></textarea></td>
+                  <td height="50"><textarea className="a4-textarea h-full"></textarea></td>
                   <td><textarea className="a4-textarea h-full"></textarea></td>
                   <td><textarea className="a4-textarea h-full"></textarea></td>
               </tr>
@@ -517,11 +516,11 @@ export default function ServiceFormsPage() {
                 "6. Overall, how satisfied are you with our company’s service?"
               ].map((q, i) => (
                 <tr key={i}>
-                    <td className="h-[25px]">
+                    <td className="h-[35px]">
                         {q}<br/>
                         <div className="chk-row">
                             {['Very Good', 'Good', 'Average', 'Poor'].map(lvl => (
-                              <label key={lvl} className="flex items-center gap-1 text-xs">
+                              <label key={lvl} className="flex items-center gap-1 text-sm">
                                 <input type="radio" name={`fb_${i}`} className="chk" checked={feedbackForm.checks[i] === lvl} onChange={() => handleFeedbackCheck(i, lvl)} /> {lvl}
                               </label>
                             ))}
