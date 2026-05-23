@@ -12,10 +12,12 @@ if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
 
 async function getTransporter() {
     return nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
         auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
+            user: process.env.EMAIL_USER || 'aartigaurik251@gmail.com',
+            pass: process.env.EMAIL_PASS || 'mwisbutvkmmodsfx'
         }
     });
 }
@@ -83,7 +85,7 @@ exports.login = async (req, res) => {
         if (isEmail) {
             // Send OTP via Email
             const mailOptions = {
-                from: process.env.EMAIL_USER,
+                from: process.env.EMAIL_USER || 'aartigaurik251@gmail.com',
                 to: loginId,
                 subject: `Your Login OTP for Nucleus Analytics`,
                 text: `Your OTP for login is: ${otp}. It will expire in 10 minutes.`
@@ -98,7 +100,10 @@ exports.login = async (req, res) => {
             } catch (mailErr) {
                 console.error('Error sending email:', mailErr);
                 console.log(`Fallback mock OTP for ${loginId}: ${otp}`);
-                res.status(500).json({ message: 'Failed to send OTP email. Please verify your email configuration in .env.' });
+                res.status(500).json({ 
+                    message: 'Failed to send OTP email.',
+                    details: mailErr.message || String(mailErr)
+                });
             }
         } else {
             // Send OTP via SMS
