@@ -2,48 +2,25 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Eye } from 'lucide-react';
-import FormPreviewModal from '../components/FormPreviewModal';
+import UserProfileModal from '../components/UserProfileModal';
 
 export default function HODashboard() {
   const [users, setUsers] = useState([]);
-  const [submittedForms, setSubmittedForms] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedForm, setSelectedForm] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     fetchUsers();
-    fetchForms();
   }, []);
 
   const fetchUsers = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`);
       setUsers(res.data);
-    } catch (error) {
-      toast.error('Failed to fetch users');
-    }
-  };
-
-  const fetchForms = async () => {
-    try {
-      setLoading(true);
-      const [instRes, servRes, feedRes] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_API_URL}/api/forms/installations`),
-        axios.get(`${import.meta.env.VITE_API_URL}/api/forms/service-reports`),
-        axios.get(`${import.meta.env.VITE_API_URL}/api/forms/customer-feedbacks`)
-      ]);
-      
-      const combined = [
-        ...instRes.data.map(f => ({ ...f, _type: 'Acceptance Certificate' })),
-        ...servRes.data.map(f => ({ ...f, _type: 'Service Report' })),
-        ...feedRes.data.map(f => ({ ...f, _type: 'Customer Feedback' }))
-      ].sort((a, b) => new Date(b.created_at || Date.now()) - new Date(a.created_at || Date.now()));
-      
-      setSubmittedForms(combined);
       setLoading(false);
     } catch (error) {
-      toast.error('Failed to fetch forms');
+      toast.error('Failed to fetch users');
       setLoading(false);
     }
   };
@@ -138,6 +115,12 @@ export default function HODashboard() {
                         Suspend
                       </button>
                     )}
+                    <button
+                      onClick={() => { setSelectedUser(user); setModalOpen(true); }}
+                      className="text-blue-400 hover:text-blue-300 bg-blue-400/10 px-4 py-2 rounded-lg transition-colors inline-flex items-center gap-2"
+                    >
+                      <Eye size={16} /> Preview
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -146,56 +129,10 @@ export default function HODashboard() {
         </div>
       </div>
 
-      <div className="card mt-10">
-        <div className="px-6 py-5 border-b border-input-border bg-surfaceHover">
-          <h2 className="text-xl font-semibold text-text-main">Recent Submitted Forms</h2>
-        </div>
-        {submittedForms.length === 0 ? (
-          <div className="p-8 text-center text-text-muted">No forms submitted yet.</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-input-border">
-              <thead className="bg-background">
-                <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">Form Type</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">Customer</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">Document ID</th>
-                  <th className="px-6 py-4 text-right text-xs font-semibold text-text-muted uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-surface divide-y divide-input-border">
-                {submittedForms.map((form, i) => (
-                  <tr key={i} className="hover:bg-surfaceHover transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap font-medium text-text-main">
-                      {form._type}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-text-muted">
-                      {form.customer_name || form.customer || '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-text-muted">
-                      {form.document_id || form.doc_id || '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => { setSelectedForm(form); setModalOpen(true); }}
-                        className="text-primary-400 hover:text-primary-300 bg-primary-400/10 px-4 py-2 rounded-lg transition-colors inline-flex items-center gap-2"
-                      >
-                        <Eye size={16} /> Preview
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      <FormPreviewModal 
+      <UserProfileModal 
         isOpen={modalOpen} 
         onClose={() => setModalOpen(false)} 
-        formType={selectedForm?._type} 
-        formData={selectedForm} 
+        user={selectedUser} 
       />
     </div>
   );
