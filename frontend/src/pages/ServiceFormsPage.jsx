@@ -16,7 +16,6 @@ function SignaturePad() {
   const stopDrawing = () => {
     setIsDrawing(false);
     canvasRef.current.getContext('2d').beginPath();
-    setImageURL(canvasRef.current.toDataURL());
   };
   const draw = (e) => {
     if (!isDrawing) return;
@@ -80,10 +79,13 @@ function SignaturePad() {
            />
            <div className="flex justify-between items-center mt-1 px-1 text-[10px]">
              <span className="text-gray-500">Draw signature</span>
-             <label className="text-blue-600 cursor-pointer font-semibold">
-               Upload
-               <input type="file" accept="image/*" className="hidden" onChange={handleUpload} />
-             </label>
+             <div className="flex gap-3">
+               <button type="button" onClick={clear} className="text-red-500 font-semibold hover:text-red-700">Clear</button>
+               <label className="text-blue-600 cursor-pointer font-semibold hover:text-blue-800">
+                 Upload
+                 <input type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+               </label>
+             </div>
            </div>
          </div>
        )}
