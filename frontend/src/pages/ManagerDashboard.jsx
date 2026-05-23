@@ -12,7 +12,7 @@ export default function ManagerDashboard() {
 
   const fetchPendingUsers = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/users/pending');
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/pending`);
       setPendingUsers(res.data);
       setLoading(false);
     } catch (error) {
@@ -23,7 +23,7 @@ export default function ManagerDashboard() {
 
   const updateStatus = async (id, status) => {
     try {
-      await axios.put(`http://localhost:5000/api/users/${id}/status`, { status });
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/users/${id}/status`, { status });
       toast.success(`User ${status} successfully`);
       fetchPendingUsers();
     } catch (error) {

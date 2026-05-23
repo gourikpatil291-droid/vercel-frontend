@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
+  const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState(1);
@@ -17,8 +17,14 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, { loginId, password });
       toast.success(res.data.message);
+      if (res.data.devOtp) {
+        console.log("=====================================");
+        console.log("MOCK OTP FOR LOGIN:", res.data.devOtp);
+        console.log("=====================================");
+        toast.success(`Mock OTP logged to console: ${res.data.devOtp}`, { duration: 5000 });
+      }
       setStep(2);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed');
@@ -28,7 +34,7 @@ export default function Login() {
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/verify-otp', { email, otp });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/verify-otp`, { loginId, otp });
       login(res.data.user, res.data.token);
       toast.success('Login successful');
       navigate('/dashboard');
@@ -74,8 +80,8 @@ export default function Login() {
             <form className="mt-8 space-y-5" onSubmit={handleLogin}>
               <div>
                 <input
-                  type="email" required className="input-field" placeholder="Email address"
-                  value={email} onChange={e => setEmail(e.target.value)}
+                  type="text" required className="input-field" placeholder="Email address or Mobile Number"
+                  value={loginId} onChange={e => setLoginId(e.target.value)}
                 />
               </div>
               <div className="relative">
@@ -100,7 +106,7 @@ export default function Login() {
           ) : (
             <form className="mt-8 space-y-5" onSubmit={handleVerifyOTP}>
               <div>
-                <p className="text-sm text-text-muted mb-4">We've sent a 6-digit OTP to your email. Check console for mock OTP.</p>
+                <p className="text-sm text-text-muted mb-4">We've sent a 6-digit OTP to your email/mobile. Check console for mock OTP.</p>
                 <input
                   type="text" required className="input-field text-center tracking-widest text-xl" placeholder="••••••"
                   value={otp} onChange={e => setOtp(e.target.value)} maxLength={6}

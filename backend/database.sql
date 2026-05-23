@@ -1,5 +1,4 @@
-CREATE DATABASE IF NOT EXISTS service_management1;
-USE service_management1;
+
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,

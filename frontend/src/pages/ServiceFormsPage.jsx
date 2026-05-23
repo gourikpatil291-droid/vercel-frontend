@@ -16,7 +16,7 @@ export default function ServiceFormsPage() {
   const submitInstallation = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/forms/installations', installationForm);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/forms/installations`, installationForm);
       toast.success('Installation report saved successfully!');
     } catch (error) {
       toast.error('Failed to save installation report');
@@ -26,7 +26,7 @@ export default function ServiceFormsPage() {
   const submitServiceReport = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/forms/service-reports', serviceForm);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/forms/service-reports`, serviceForm);
       toast.success('Service report saved successfully!');
     } catch (error) {
       toast.error('Failed to save service report');
@@ -36,7 +36,7 @@ export default function ServiceFormsPage() {
   const submitClosureForm = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/forms/closure-forms', closureForm);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/forms/closure-forms`, closureForm);
       toast.success('Closure form saved successfully!');
     } catch (error) {
       toast.error('Failed to save closure form');
