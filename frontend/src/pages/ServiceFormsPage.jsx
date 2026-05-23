@@ -118,7 +118,15 @@ export default function ServiceFormsPage() {
       replacements.push({ input, div });
     });
 
-    await html2pdf().set(opt).from(element).save();
+    await html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
+      const totalPages = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        pdf.setPage(i);
+        pdf.setDrawColor(0);
+        pdf.setLineWidth(0.5);
+        pdf.rect(10, 10, 190, 277);
+      }
+    }).save();
 
     // Restore original inputs
     replacements.forEach(({ input, div }) => {
@@ -192,7 +200,7 @@ export default function ServiceFormsPage() {
         
         @media print {
             body { background: #fff; padding: 0; }
-            .a4-page { border: 2px solid #000; margin: 0; padding: 15mm; width: 210mm; min-height: 297mm; box-shadow: none; page-break-after: always; }
+            .a4-page { border: none; margin: 0; padding: 15mm; width: 210mm; min-height: 297mm; box-shadow: none; page-break-after: always; }
             .no-print { display: none !important; }
         }
       `}</style>
