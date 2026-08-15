@@ -20,7 +20,6 @@ exports.register = async (req, res) => {
     try {
         const { name, email, mobile, employee_id, address, role, password } = req.body;
 
-        // Check if user exists
         const existing = await User.findOne({
             $or: [{ email }, { mobile }, { employee_id }]
         });
@@ -49,11 +48,10 @@ exports.register = async (req, res) => {
         res.status(201).json({ message });
     } catch (error) {
         console.error('Registration Error:', error);
-        res.status(500).json({ message: 'Server error during registration' });
+        res.status(500).json({ message: 'Server error during registration', error: error.message });
     }
 };
 
-// STEP 1: LOGIN WITH PASSWORD -> TRIGGERS OTP EMAIL TO USER
 exports.login = async (req, res) => {
     try {
         const { loginId, password } = req.body;
@@ -78,9 +76,8 @@ exports.login = async (req, res) => {
             return res.status(400).json({ message: 'Your account registration was rejected.' });
         }
 
-        // Generate 6-digit OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 mins
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
         await Otp.create({
             email: user.email,
@@ -122,7 +119,6 @@ exports.login = async (req, res) => {
                 text: `Hello ${user.name}, Your OTP for login is: ${otp}. It will expire in 10 minutes.`,
                 html: htmlTemplate
             });
-            console.log(`OTP Email sent successfully to ${user.email}`);
             return res.status(200).json({ 
                 message: `OTP sent to your email (${user.email}). Please enter it to complete login.`,
                 email: user.email
@@ -136,7 +132,7 @@ exports.login = async (req, res) => {
         }
     } catch (error) {
         console.error('Login Error:', error);
-        res.status(500).json({ message: 'Server error during login' });
+        res.status(500).json({ message: 'Server error during login', error: error.message, stack: error.stack });
     }
 };
 
@@ -144,7 +140,6 @@ exports.sendOTP = async (req, res) => {
     return exports.login(req, res);
 };
 
-// STEP 2: VERIFY OTP -> ISSUES JWT TOKEN & LOGS IN
 exports.verifyOTP = async (req, res) => {
     try {
         const { loginId, otp } = req.body;
@@ -186,6 +181,6 @@ exports.verifyOTP = async (req, res) => {
         });
     } catch (error) {
         console.error('Verify OTP Error:', error);
-        res.status(500).json({ message: 'Server error verifying OTP' });
+        res.status(500).json({ message: 'Server error verifying OTP', error: error.message });
     }
 };
