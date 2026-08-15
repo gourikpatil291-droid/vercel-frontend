@@ -4,6 +4,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
+import { API_URL } from '../api';
 
 export default function Login() {
   const [loginId, setLoginId] = useState('');
@@ -11,41 +12,45 @@ export default function Login() {
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, { loginId, password });
+      const res = await axios.post(`${API_URL}/api/auth/login`, { loginId, password });
       toast.success(res.data.message);
       if (res.data.devOtp) {
-        console.log("=====================================");
-        console.log("MOCK OTP FOR LOGIN:", res.data.devOtp);
-        console.log("=====================================");
-        toast.success(`Mock OTP logged to console: ${res.data.devOtp}`, { duration: 5000 });
+        console.log("MOCK OTP:", res.data.devOtp);
       }
       setStep(2);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/verify-otp`, { loginId, otp });
+      const res = await axios.post(`${API_URL}/api/auth/verify-otp`, { loginId, otp });
       login(res.data.user, res.data.token);
       toast.success('Login successful');
       navigate('/dashboard');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Invalid OTP');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex bg-background">
-      {/* Left side Image (Hidden on mobile) */}
+      {/* Left side Image */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-surface p-6">
          <div className="absolute inset-0 rounded-3xl m-4 overflow-hidden border border-input-border shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-t from-primary-600/50 to-transparent mix-blend-multiply z-10"></div>
@@ -93,27 +98,21 @@ export default function Login() {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              <div className="flex items-center">
-                <input type="checkbox" id="remember" className="h-4 w-4 rounded border-input-border bg-input-bg text-primary-500 focus:ring-primary-500 focus:ring-offset-background" />
-                <label htmlFor="remember" className="ml-2 block text-sm text-text-muted">
-                  Remember me
-                </label>
-              </div>
-              <button type="submit" className="w-full btn-primary py-4 text-base mt-4">
-                Login to account
+              <button type="submit" disabled={loading} className="w-full btn-primary py-4 text-base mt-4 disabled:opacity-50">
+                {loading ? 'Sending OTP...' : 'Login to account'}
               </button>
             </form>
           ) : (
             <form className="mt-8 space-y-5" onSubmit={handleVerifyOTP}>
               <div>
-                <p className="text-sm text-text-muted mb-4">We've sent a 6-digit OTP to your email/mobile. Check console for mock OTP.</p>
+                <p className="text-sm text-text-muted mb-4">We've sent a 6-digit OTP code to your email. Please check your inbox.</p>
                 <input
-                  type="text" required className="input-field text-center tracking-widest text-xl" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢"
+                  type="text" required className="input-field text-center tracking-widest text-xl" placeholder="••••••"
                   value={otp} onChange={e => setOtp(e.target.value)} maxLength={6}
                 />
               </div>
-              <button type="submit" className="w-full btn-primary py-4 text-base mt-4">
-                Verify OTP & Login
+              <button type="submit" disabled={loading} className="w-full btn-primary py-4 text-base mt-4 disabled:opacity-50">
+                {loading ? 'Verifying...' : 'Verify OTP & Login'}
               </button>
             </form>
           )}
