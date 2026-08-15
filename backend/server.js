@@ -12,24 +12,23 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Database connection middleware for Vercel Serverless & Local
+// Database connection middleware for Vercel Serverless
 app.use(async (req, res, next) => {
     try {
         await connectDB();
-        next();
     } catch (err) {
         console.error('Middleware DB Error:', err);
-        next();
     }
+    next();
+});
+
+app.get('/', (req, res) => {
+    res.status(200).send('Service Management API is running live!');
 });
 
 app.use('/api/auth', authRoutes);
 app.use('/api/forms', formRoutes);
 app.use('/api/users', userRoutes);
-
-app.get('/', (req, res) => {
-    res.send('Service Management API is running live!');
-});
 
 if (!process.env.VERCEL) {
     const PORT = process.env.PORT || 5000;
