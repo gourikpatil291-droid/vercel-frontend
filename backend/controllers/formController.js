@@ -1,4 +1,7 @@
-const pool = require('../config/db');
+const Installation = require('../models/Installation');
+const ServiceReport = require('../models/ServiceReport');
+const ClosureForm = require('../models/ClosureForm');
+const CustomerReview = require('../models/CustomerReview');
 
 // Installation Forms
 exports.submitInstallation = async (req, res) => {
@@ -7,8 +10,7 @@ exports.submitInstallation = async (req, res) => {
         for (let key in data) {
             if (data[key] === '') data[key] = null;
         }
-        const query = 'INSERT INTO installations SET ?';
-        await pool.query(query, data);
+        await Installation.create(data);
         res.status(201).json({ message: 'Installation form submitted' });
     } catch (error) {
         console.error(error);
@@ -18,13 +20,8 @@ exports.submitInstallation = async (req, res) => {
 
 exports.getInstallations = async (req, res) => {
     try {
-        let query = 'SELECT * FROM installations';
-        let params = [];
-        if (req.user.role === 'SE') {
-            query += ' WHERE user_id = ?';
-            params.push(req.user.id);
-        }
-        const [rows] = await pool.query(query, params);
+        const query = req.user.role === 'SE' ? { user_id: req.user.id } : {};
+        const rows = await Installation.find(query).sort({ created_at: -1 });
         res.status(200).json(rows);
     } catch (error) {
         console.error(error);
@@ -39,8 +36,7 @@ exports.submitServiceReport = async (req, res) => {
         for (let key in data) {
             if (data[key] === '') data[key] = null;
         }
-        const query = 'INSERT INTO service_reports SET ?';
-        await pool.query(query, data);
+        await ServiceReport.create(data);
         res.status(201).json({ message: 'Service report submitted' });
     } catch (error) {
         console.error(error);
@@ -50,13 +46,8 @@ exports.submitServiceReport = async (req, res) => {
 
 exports.getServiceReports = async (req, res) => {
     try {
-        let query = 'SELECT * FROM service_reports';
-        let params = [];
-        if (req.user.role === 'SE') {
-            query += ' WHERE user_id = ?';
-            params.push(req.user.id);
-        }
-        const [rows] = await pool.query(query, params);
+        const query = req.user.role === 'SE' ? { user_id: req.user.id } : {};
+        const rows = await ServiceReport.find(query).sort({ created_at: -1 });
         res.status(200).json(rows);
     } catch (error) {
         console.error(error);
@@ -71,8 +62,7 @@ exports.submitClosureForm = async (req, res) => {
         for (let key in data) {
             if (data[key] === '') data[key] = null;
         }
-        const query = 'INSERT INTO closure_forms SET ?';
-        await pool.query(query, data);
+        await ClosureForm.create(data);
         res.status(201).json({ message: 'Closure form submitted' });
     } catch (error) {
         console.error(error);
@@ -82,13 +72,8 @@ exports.submitClosureForm = async (req, res) => {
 
 exports.getClosureForms = async (req, res) => {
     try {
-        let query = 'SELECT * FROM closure_forms';
-        let params = [];
-        if (req.user.role === 'SE') {
-            query += ' WHERE user_id = ?';
-            params.push(req.user.id);
-        }
-        const [rows] = await pool.query(query, params);
+        const query = req.user.role === 'SE' ? { user_id: req.user.id } : {};
+        const rows = await ClosureForm.find(query).sort({ created_at: -1 });
         res.status(200).json(rows);
     } catch (error) {
         console.error(error);
@@ -103,8 +88,7 @@ exports.submitCustomerFeedback = async (req, res) => {
         for (let key in data) {
             if (data[key] === '') data[key] = null;
         }
-        const query = 'INSERT INTO customer_reviews SET ?';
-        await pool.query(query, data);
+        await CustomerReview.create(data);
         res.status(201).json({ message: 'Customer feedback submitted' });
     } catch (error) {
         console.error(error);
@@ -114,13 +98,8 @@ exports.submitCustomerFeedback = async (req, res) => {
 
 exports.getCustomerFeedbacks = async (req, res) => {
     try {
-        let query = 'SELECT * FROM customer_reviews';
-        let params = [];
-        if (req.user.role === 'SE') {
-            query += ' WHERE user_id = ?';
-            params.push(req.user.id);
-        }
-        const [rows] = await pool.query(query, params);
+        const query = req.user.role === 'SE' ? { user_id: req.user.id } : {};
+        const rows = await CustomerReview.find(query).sort({ created_at: -1 });
         res.status(200).json(rows);
     } catch (error) {
         console.error(error);
@@ -132,16 +111,16 @@ exports.getCustomerFeedbacks = async (req, res) => {
 exports.getUserForms = async (req, res) => {
     try {
         const { userId } = req.params;
-        const [installations] = await pool.query('SELECT * FROM installations WHERE user_id = ?', [userId]);
-        const [serviceReports] = await pool.query('SELECT * FROM service_reports WHERE user_id = ?', [userId]);
-        const [customerFeedbacks] = await pool.query('SELECT * FROM customer_reviews WHERE user_id = ?', [userId]);
-        
+        const installations = await Installation.find({ user_id: userId });
+        const serviceReports = await ServiceReport.find({ user_id: userId });
+        const customerFeedbacks = await CustomerReview.find({ user_id: userId });
+
         const combined = [
-            ...installations.map(f => ({ ...f, _type: 'Acceptance Certificate' })),
-            ...serviceReports.map(f => ({ ...f, _type: 'Service Report' })),
-            ...customerFeedbacks.map(f => ({ ...f, _type: 'Customer Feedback' }))
+            ...installations.map(f => ({ ...f.toObject(), _type: 'Acceptance Certificate' })),
+            ...serviceReports.map(f => ({ ...f.toObject(), _type: 'Service Report' })),
+            ...customerFeedbacks.map(f => ({ ...f.toObject(), _type: 'Customer Feedback' }))
         ].sort((a, b) => new Date(b.created_at || Date.now()) - new Date(a.created_at || Date.now()));
-        
+
         res.status(200).json(combined);
     } catch (error) {
         console.error(error);
