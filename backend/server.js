@@ -12,14 +12,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Database connection middleware for Vercel Serverless
+// Await DB connection middleware for Vercel Serverless
 app.use(async (req, res, next) => {
     try {
         await connectDB();
+        next();
     } catch (err) {
         console.error('Middleware DB Error:', err);
+        res.status(500).json({ message: 'Database connection failed', error: err.message });
     }
-    next();
 });
 
 app.get('/', (req, res) => {
