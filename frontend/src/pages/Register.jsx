@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import toast from 'react-hot-toast';
 import { Eye, EyeOff } from 'lucide-react';
-import { API_URL } from '../api';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -19,11 +18,15 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post(`${API_URL}/api/auth/register`, formData);
+      const res = await api.post('/api/auth/register', formData);
       toast.success(res.data.message);
       navigate('/login');
     } catch (error) {

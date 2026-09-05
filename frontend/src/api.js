@@ -1,13 +1,29 @@
 import axios from 'axios';
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL && import.meta.env.VITE_API_URL !== 'undefined') 
-  ? import.meta.env.VITE_API_URL 
-  : (window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://backend-smoky-zeta-1h0drgr8cx.vercel.app');
+const getApiBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl && envUrl !== 'undefined' && envUrl.trim() !== '') {
+    return envUrl.replace(/\/$/, '');
+  }
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:5000';
+  }
+  return 'https://backend-gourikpatil291-5117s-projects.vercel.app';
+};
 
-export const API_URL = API_BASE_URL;
+export const API_URL = getApiBaseUrl();
 
 const api = axios.create({
-  baseURL: API_BASE_URL
+  baseURL: API_URL
 });
 
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, (error) => Promise.reject(error));
+
 export default api;
+

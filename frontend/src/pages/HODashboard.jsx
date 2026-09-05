@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import toast from 'react-hot-toast';
 import { Eye } from 'lucide-react';
 import UserProfileModal from '../components/UserProfileModal';
@@ -16,7 +16,7 @@ export default function HODashboard() {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`);
+      const res = await api.get('/api/users');
       setUsers(res.data);
       setLoading(false);
     } catch (error) {
@@ -27,7 +27,7 @@ export default function HODashboard() {
 
   const updateStatus = async (id, status) => {
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/users/${id}/status`, { status });
+      await api.put(`/api/users/${id}/status`, { status });
       toast.success(`User ${status} successfully`);
       fetchUsers();
     } catch (error) {

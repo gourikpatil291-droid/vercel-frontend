@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import axios from 'axios';
+import api from '../api';
 import toast from 'react-hot-toast';
 import { Printer, Download } from 'lucide-react';
 import html2pdf from 'html2pdf.js';
@@ -124,7 +124,7 @@ export default function ServiceFormsPage() {
   const submitInstallation = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/forms/installations`, installationForm);
+      await api.post('/api/forms/installations', installationForm);
       toast.success('Acceptance Certificate saved successfully!');
     } catch (error) {
       toast.error('Failed to save Acceptance Certificate');
@@ -134,7 +134,7 @@ export default function ServiceFormsPage() {
   const submitServiceReport = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/forms/service-reports`, serviceForm);
+      await api.post('/api/forms/service-reports', serviceForm);
       toast.success('Service report saved successfully!');
     } catch (error) {
       toast.error('Failed to save service report');
@@ -155,7 +155,7 @@ export default function ServiceFormsPage() {
           improvement: feedbackForm.improvement
         })
       };
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/forms/customer-feedbacks`, payload);
+      await api.post('/api/forms/customer-feedbacks', payload);
       toast.success('Customer Feedback saved successfully!');
     } catch (error) {
       toast.error('Failed to save Customer Feedback');

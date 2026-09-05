@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { X, FileText, Eye } from 'lucide-react';
 import FormPreviewModal from './FormPreviewModal';
 
@@ -18,9 +18,7 @@ export default function UserProfileModal({ isOpen, onClose, user }) {
   const fetchUserForms = async (userId) => {
     try {
       setLoading(true);
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/forms/user/${userId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
+      const res = await api.get(`/api/forms/user/${userId}`);
       setForms(res.data);
     } catch (error) {
       console.error('Failed to fetch user forms', error);
